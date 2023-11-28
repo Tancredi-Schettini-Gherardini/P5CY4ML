@@ -1,8 +1,12 @@
-# -*- coding: utf-8 -*-
-
+"""
+Script of general functions used throughout the paper to compute:
+    ~ Exact Hodge numbers (via LG model) of an input weight system.
+    ~ Approximated Hodge numbers (via the §5 approximation) of an input weight system.
+    ~ Exact Euler numbers of an input weight system.
+    ~ Check for intradivisibility of an input weight system.
+"""
 
 # Import libraries
-
 import numpy as np
 from itertools import product
 
@@ -15,13 +19,11 @@ from itertools import product
 
 def theta(q,l): 
     # Finds \theta(q), defined in arXiv:2006.15825. q should be a vector and l should be an integer.
-    
     theta = q*l 
     return theta
     
 def theta_bar(q, l): 
     # Finds \bar{theta}(q), defined in arXiv:2006.15825. q should be a vector and l should be an integer
-    
     the = theta(q,l)
     theta_bar = np.zeros(len(the))
     
@@ -35,7 +37,6 @@ def theta_bar(q, l):
 
 def age(q,l):
     # Finds age(q), defined in arXiv:2006.15825. q should be a vector and l should be an integer
-    
     theta_b = theta_bar(q,l)
     age=0
     for p in range(0,len(theta_b)):
@@ -53,13 +54,10 @@ def size(q,l,tot_w):
 def Product(a,b): 
     # a,b must be a list whose entries are of the form (coefficient, exponent). 
     # This function returns the product of the two polynomials, in the same format.
-    
     if len(b)==0:
-        
         return a
     
     else:
-        
         c=list(product(a,b))
         c=np.array(c)
         raw_product = np.zeros((len(c),2))
@@ -68,20 +66,17 @@ def Product(a,b):
             raw_product[i,1] = c[i,0,1] + c[i,1,1]
             
         for i in range(len(c)):
-            
             for j in range (i+1,len(raw_product)):
-
                 if j<len(raw_product):
                     if abs(raw_product[i,1] - raw_product[j,1])<0.0000000001:
                         raw_product[i,0] = raw_product[i,0] + raw_product[j,0]
                         raw_product = np.delete(raw_product, j, 0)
                 
-                
         return raw_product
 
 
 def Find_fractions(q, theta, d, l): 
-    #Given q, \theta(q), d = len(q) and some integer l, it finds the lth contribution
+    # Given q, \theta(q), d = len(q) and some integer l, it finds the lth contribution
     # to the Hodge numbers' formula in terms of the polynomial
     # fractions involved (corollary 4.4 in arXiv:2006.15825).
     first_factor = 0
@@ -111,7 +106,6 @@ def Total_quotient_clean(fractions,w_tot):
     fr_index = []
 
     for i in range(round(len(fractions)/2)):
-        
         if abs(fractions[2*i,1,1] - fractions[(2*i+1),1,1]) < 0.0000001:
             c_int_w += 1
         
@@ -119,20 +113,14 @@ def Total_quotient_clean(fractions,w_tot):
             count_w.append(c_int_w)
             c_int_w=1
             fr_index.append(i-1)   
-            
-    n_diff_frac = len(count_w)
-    
+                
     numers = []
     denoms = []
     integer_exp_num = []
     integer_exp_den = []
     px = []
     gx = []
-    px_multiple = []
-    px_multiple = []
     
-    n_diff_frac = round(len(fractions)/2)
-
     for i in range(round(len(fractions)/2)):
         
         numers.append(fractions[2*i])
@@ -173,9 +161,7 @@ def Total_quotient_clean(fractions,w_tot):
 
 
 def Hodge_reader_3folds(poly):
-    
     # It just reads the Hodge numbers off from the polynomial, for C-Y three-folds.
-    
     h11 = 0
     h12 = 0
     
@@ -188,13 +174,10 @@ def Hodge_reader_3folds(poly):
             h12=-(poly[J,0])
             
     return [h11, h12]
-        
 
 
 def Hodge_reader_4folds(poly):
-    
     # It just reads the Hodge numbers off from the polynomial, for C-Y four-folds.
-    
     h11 = 0
     h12 = 0
     h13 = 0
@@ -217,11 +200,13 @@ def Hodge_reader_4folds(poly):
     return [h11, h12, h13, h22]
 
 
-#%% Now we define the main functions: one for the calculation of the exact
+#%% --------------------------------------------------------------------------------------
+#   Now we define the main functions: one for the calculation of the exact
 #   Hodge numbers, and the other one for the calculation of the approximated ones.
 
 def Poincare_clean(w): 
     """
+    Function to compute the exact Hodge numbers for the Calabi-Yau hypersurface of the input weight system's respective weighted projective space.
 
     Parameters
     ----------
@@ -261,24 +246,18 @@ def Poincare_clean(w):
     
     for l in range(0,tot_w):
         # We perform the sum in Batyrev formula, term by term.
-        simp_fr = []
         quotient = []
         first_f = 0
-        
-        theta_b = theta_bar(q,l)
          
         fr, first_f = Find_fractions(q, theta(q,l), d, l) 
         # This finds the fractions that we need to multiply for the current term.
 
         if len(fr)>0:
-        
             quotient = Total_quotient_clean(fr, tot_w)
-
             quoti = []
             
             for i in range(len(quotient)):
                 # We append the powers next to the coefficients.
-            
                 quoti.append([quotient[i], (len(quotient) - i -1)/tot_w + first_f])
 
             final_prod = quoti
@@ -287,30 +266,21 @@ def Poincare_clean(w):
             final_prod = []
             
         final_prod = np.array(final_prod)
-        
         final_prod_int = []
         
         # We now select the integer coefficients. Note that if there are none,
         # the contribution is taken to be 1.
-        
         if final_prod.size == 0:
-            
             summand.append([(-1)**(round(size(q,l,tot_w))),   age(q,l) - 1, size(q,l,tot_w) - age(q,l) - 1])
         
         elif len(np.array(final_prod).shape)==1:
-         
                 if abs(final_prod[1] - round(final_prod[1])) < 0.0000001:
-                    
                     if final_prod[i,0] > 0:
-                    
                         final_prod_int.append([final_prod[0], final_prod[1]])
                         
         elif len(np.array(final_prod).shape)>1:
-            
             for i in range(len(final_prod)):
-                
                 if abs(final_prod[i,1] - round(final_prod[i,1])) < 0.0000001:
-                
                     if final_prod[i,0] > 0.0000001:
                 
                         final_prod_int.append([final_prod[i,0], final_prod[i,1]])
@@ -320,18 +290,15 @@ def Poincare_clean(w):
         for i in range(len(final_prod_int)):
             # We multiply the current result by the appropriate powers of u and v,
             # again according to corollary 4.4 in arXiv:2006.15825.
-
             summand.append([final_prod_int[i,0] * (-1)**(round((size(q,l,tot_w)))), final_prod_int[i,1] + age(q,l) - 1, final_prod_int[i,1] + size(q,l,tot_w) - age(q,l) - 1])
             
             if round(size(q,l,tot_w))==d:
                 # This is one of the two terms contributing to our approximation.
-                
                 approximation.append([final_prod_int[i,0] * (-1)**(round((size(q,l,tot_w)))), final_prod_int[i,1] + age(q,l) - 1, final_prod_int[i,1] + size(q,l,tot_w) - age(q,l) - 1])   
                 
 
         if l==0:
             # This is the other of the two terms contributing to our approximation.
-
             for i in range(len(summand)):
                 approximation.append(summand[i])  
                
@@ -339,11 +306,8 @@ def Poincare_clean(w):
     summand=np.array(summand)
     for k in range(10):
         # Here we just make sure that all the terms with the same power have been summed up.
-        
         for i in range(len(summand)):
-            
             for j in range (i+1,len(summand)):
-
                 if j<len(summand):
                     if abs(summand[i,1] - summand[j,1])<0.000001 and abs(summand[i,2] - summand[j,2])<0.000001:
                         summand[i,0] = summand[i,0] + summand[j,0]
@@ -353,11 +317,8 @@ def Poincare_clean(w):
 
     for k in range(10):
         # Here we just make sure that all the terms with the same power have been summed up.
-        
         for i in range(len(approximation)):
-            
             for j in range (i+1,len(approximation)):
-
                 if j<len(approximation):
                     if abs(approximation[i,1] - approximation[j,1])<0.000001 and abs(approximation[i,2] - approximation[j,2])<0.000001:
                         approximation[i,0] = approximation[i,0] + approximation[j,0]
@@ -369,8 +330,8 @@ def Poincare_clean(w):
 
 
 def Poincare_approx_clean(w):
-
     """
+    Function to compute the approximate Hodge numbers for the Calabi-Yau hypersurface of the input weight system's respective weighted projective space.
     
     Parameters
     ----------
@@ -398,13 +359,9 @@ def Poincare_approx_clean(w):
     q = w / tot_w
     
     approximation = []
-    summand=[]
-    counter_size4=0
-    counter_size3=0
-    
+    summand=[]    
     
     for l in range(0,tot_w):
-        
         if round(size(q,l,tot_w))==d:
             # This founds one contribution, corresponding to the maximum size elements,
             # which involves no polynomial division.
@@ -413,31 +370,22 @@ def Poincare_approx_clean(w):
         
         if l==0:
             # The other contribution comes from the l=0 term in the sum.
-            
-            simp_fr = []
             extra_t = []
             quotient = []
             first_f = 0
-            
-            theta_b = theta_bar(q,l)
-             
-    
+                         
             fr, first_f = Find_fractions(q, theta(q,l), d, l)
             # This finds the fractions that we need to multiply for the current term.
     
             if len(fr)>0:
-            
                 quotient = Total_quotient_clean(fr, tot_w)
-    
                 quoti = []
                 
                 for i in range(len(quotient)):
                     # We append the powers next to the coefficients.
-                
                     quoti.append([quotient[i], (len(quotient) - i -1)/tot_w + first_f])
     
                 final_prod = Product(quoti, extra_t)
-                
             
             else: 
                 final_prod = []
@@ -453,21 +401,14 @@ def Poincare_approx_clean(w):
                 summand.append([(-1)**(round(size(q,l,tot_w))),   age(q,l) - 1, size(q,l,tot_w) - age(q,l) - 1])
             
             elif len(np.array(final_prod).shape)==1:
-             
                     if abs(final_prod[1] - round(final_prod[1])) < 0.0000001:
-                        
                         if final_prod[i,0] > 0:
-                        
                             final_prod_int.append([final_prod[0], final_prod[1]])
                             
             elif len(np.array(final_prod).shape)>1:
-                
                 for i in range(len(final_prod)):
-                    
                     if abs(final_prod[i,1] - round(final_prod[i,1])) < 0.0000001:
-                    
                         if final_prod[i,0] > 0.0000001:
-                    
                             final_prod_int.append([final_prod[i,0], final_prod[i,1]])
 
             final_prod_int = np.array(final_prod_int)
@@ -477,11 +418,7 @@ def Poincare_approx_clean(w):
                 # again according to corollary 4.4 in arXiv:2006.15825.
                 
                 summand.append([final_prod_int[i,0] * (-1)**(round((size(q,l,tot_w)))), final_prod_int[i,1] + age(q,l) - 1, final_prod_int[i,1] + size(q,l,tot_w) - age(q,l) - 1])
-                
-                #######if round(size(q,l,tot_w))==d:
-                    
-                    ###approximation.append([final_prod_int[i,0] * (-1)**(round((size(q,l,tot_w)))), final_prod_int[i,1] + age(q,l) - 1, final_prod_int[i,1] + size(q,l,tot_w) - age(q,l) - 1])   
-        
+                        
             for i in range(len(summand)):
                 approximation.append(summand[i])  
                
@@ -489,11 +426,8 @@ def Poincare_approx_clean(w):
 
     for k in range(10):
         # Here we just make sure that all the terms with the same power have been summed up.
-        
         for i in range(len(approximation)):
-            
             for j in range (i+1,len(approximation)):
-
                 if j<len(approximation):
                     if abs(approximation[i,1] - approximation[j,1])<0.000001 and abs(approximation[i,2] - approximation[j,2])<0.000001:
                         approximation[i,0] = approximation[i,0] + approximation[j,0]
@@ -501,3 +435,80 @@ def Poincare_approx_clean(w):
     
   
     return approximation
+
+#%% --------------------------------------------------------------------------------------
+#   Now we define the functions to compute other weight system properties
+
+def EulerNumber(ws):
+    '''
+    Function to compute the exact Euler number for the Calabi-Yau hypersurface within the input weight system's respective weighted projective space.
+
+    Parameters
+    ----------
+    ws : list
+        The input weight system. A list of positive integers.
+
+    Returns
+    -------
+    int
+        The output Euler number.
+
+    '''
+    weights = np.array(ws)
+    Euler = 0
+    
+    #Define the calculation storage list
+    d = np.sum(weights) #...sum of weights
+    q = weights/d       #...normalised weights
+    
+    #Loop through the r & l values
+    for r in range(d):                  #...loops through from 0 to sum(weights)-1 inclusive
+        rq = r*q                        #...multiplies all normalised weights by r
+        for l in range(d):              #...loops through from 0 to sum(weights)-1 inclusive
+            lq = l*q                    #...multiplies all normalised weights by l
+            term, term_check = 1, False #...define the product term to be 1; 'term_check' is a boolean that can be used to see if the integer condition is ever met
+            
+            #For each r & l value compute the product term
+            for i in range(len(weights)): #...loop through the weights 
+                if float(np.round(rq[i],5)).is_integer() and float(np.round(lq[i],5)).is_integer(): #...if r*weight & l*weight integer multiple factor into product term
+                    if not term_check: term_check = True
+                    term *= 1-(1./q[i])
+            #Add this r & l product term to the Euler number value
+            Euler += np.round(term,5)
+            
+    #Normalise Euler number after sums completed
+    Euler *= -1/d
+    Euler = np.round(Euler,5) #...round the value to 5 dp (i.e. remove any precision errors form using floats)
+    
+    return int(Euler)
+
+
+def intradivisibility(ws):
+    '''
+    Function to compute whether an input weight system satisfies the intradivisibility property (required for it to be transverse and admit a Calabi-Yau hypersurface).
+
+    Parameters
+    ----------
+    ws : list
+        The input weight system. A list of positive integers.
+
+    Returns
+    -------
+    ID : bool
+        A boolean type determining whether the input weight system is intradivisible or not.
+
+    '''
+    
+    trial = np.array(ws)
+    #Compute all divisibility checks
+    checks = np.array([(sum(trial)-trial)/k for k in trial]) 
+    #Evaluate if array entries are integers
+    checks_boolean = np.array([[val.is_integer() for val in row] for row in checks])
+    #For intradivisible condition to be satisfied then there is a True in every row (i.e. all weights have at least one weight st divisible)
+    if np.all(np.array([np.any(check) for check in checks_boolean])):
+        ID = True
+    else:
+        ID = False
+        
+    return ID
+            

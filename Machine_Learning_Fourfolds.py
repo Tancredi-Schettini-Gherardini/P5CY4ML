@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Import the four-folds dataset, and perform machine-learning with a simply-connected
 regressor neural network to predict the cohomological data and the Euler number.
@@ -6,33 +5,18 @@ The code below reproduces section 4.1 of the paper.
 """
 
 #Import libraries
-
 # General ones
 import numpy as np
 import gzip
-import matplotlib.pyplot as plt
 from math import floor
-import matplotlib.pyplot as plt
-from ast import literal_eval
-from pandas import qcut
-from copy import deepcopy
-from mpl_toolkits import mplot3d
 
 # For ML
-from sklearn.neural_network import MLPRegressor, MLPClassifier
-from sklearn.linear_model import LogisticRegression as LR
-from sklearn.svm import SVC
-from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPRegressor
 from sklearn.metrics import mean_squared_error as MSE
 from sklearn.metrics import mean_absolute_percentage_error as MAPE
-from sklearn.metrics import confusion_matrix as CM
-from sklearn.metrics import accuracy_score as Acc
-from sklearn.metrics import matthews_corrcoef as MCC
-from sklearn.cluster import KMeans
-from collections import Counter
 
 #Define path to data
-path = 'C:/***Insert_your_path***/5dTransWH.all.gz'
+path = './Data//5dTransWH.all.gz'
 
 # Import data
 # The data contain the three Hodge numbers h^{1,1}, h^{1,2}, h^{1,3} and the Euler number \Chi.

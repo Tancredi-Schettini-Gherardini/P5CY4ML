@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Import the four-folds dataset, produce plots to show the interesting features 
 of the invariants and perform a clustering analysis.
@@ -6,22 +5,14 @@ The code below reproduces section 3.1 of the paper.
 """
 
 #Import libraries
-
-# General ones
 import numpy as np
 import gzip
 import matplotlib.pyplot as plt
-from math import floor
-import matplotlib.pyplot as plt
-from ast import literal_eval
-from pandas import qcut
-from copy import deepcopy
-from mpl_toolkits import mplot3d
 from sklearn.cluster import KMeans
 from collections import Counter
 
 #Define path to data
-path = 'C:/***Insert_your_path_here***/5dTransWH.all.gz'
+path = './Data/5dTransWH.all.gz'
 
 # Import data
 # The data contain the three Hodge numbers h^{1,1}, h^{1,2}, h^{1,3} and the Euler number \Chi.
@@ -192,7 +183,6 @@ plt.plot(x, -x , linewidth = 5, color="orangered", alpha = 0.5, label = r"$h^{1,
 plt.xlabel(r'$h^{1,1} - h^{1,3}$', fontsize = 15)
 plt.ylabel(r'$h^{1,1} + h^{1,3}$', fontsize = 15)
 
-
 #plt.savefig('Mirror_plot.jpg', dpi=1200, bbox_inches = "tight")
 
 #%% Two highest Hodges plot
@@ -216,7 +206,6 @@ plt.ylabel(r'$h^{2,2} $', fontsize = 15)
 plt.legend(loc="center right")   
 
 #plt.savefig('Mirror_plot_2.jpg', dpi=1200, bbox_inches = "tight")
-
 
 #%% 3-d Hodges plot
 
@@ -300,6 +289,7 @@ plt.xlabel(r"$h^{1,1}/ w_{max}$", fontsize = 15)
 plt.ylabel("Frequency", fontsize = 15)
 
 #plt.savefig('clust_hist.jpg', dpi=1000, bbox_inches = "tight")
+
 #%% Visualise the data and the clusters that were found above on the same plot.
 
 fig = plt.figure()
