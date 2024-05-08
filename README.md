@@ -17,12 +17,16 @@ The files `Data_Analysis_Fourfolds.py`, `Machine_Learning_Fourfolds.py`, and `SR
 ``` 
 @article{Hirst:2023kdl,
     author = "Hirst, Edward and Gherardini, Tancredi Schettini",
-    title = "{Calabi-Yau Four/Five/Six-folds as $\mathbb{P}^n_\textbf{w}$ Hypersurfaces: Machine Learning, Approximation, and Generation}",
+    title = "{Calabi-Yau four-, five-, sixfolds as $\mathbb{P}_w^n$ hypersurfaces: Machine learning, approximation, and generation}",
     eprint = "2311.17146",
     archivePrefix = "arXiv",
     primaryClass = "hep-th",
     reportNumber = "QMUL-PH-23-25",
-    month = "11",
-    year = "2023"
+    doi = "10.1103/PhysRevD.109.106006",
+    journal = "Phys. Rev. D",
+    volume = "109",
+    number = "10",
+    pages = "106006",
+    year = "2024"
 }
 ```
